@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Una sorpresa para ti</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet" />
+<style>
+  /* =========================================================
+     EDITA: título/mensaje abajo en el HTML (busca "EDITA")
+             fecha del aniversario en el <script> (TARGET)
+     ========================================================= */
+  :root{ --sans:'Poppins',sans-serif; --disp:'Fredoka',sans-serif;
+    --sky1:#aee0ff; --sky2:#5ab8ff; --deep:#0a327f; }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:var(--sans);min-height:100vh;color:#eaf3ff;overflow-x:hidden;text-align:center;
+    display:flex;align-items:center;justify-content:center;padding:24px;
+    background:
+      radial-gradient(720px 440px at 80% 6%, rgba(170,205,255,.30), transparent 62%),
+      radial-gradient(1000px 620px at 50% 122%, rgba(24,80,180,.55), transparent 70%),
+      linear-gradient(180deg,#020e2b 0%, #06235e 52%, #0a327f 100%);
+    background-attachment:fixed}
+
+  /* ---- cielo ---- */
+  .sky{position:fixed;inset:0;z-index:0;overflow:hidden;pointer-events:none}
+  .star{position:absolute;border-radius:50%;animation:tw ease-in-out infinite}
+  @keyframes tw{0%,100%{opacity:.25;transform:scale(.6)}50%{opacity:1;transform:scale(1)}}
+  .spark{position:absolute;animation:tw ease-in-out infinite}
+
+  /* ---- una sola luna, con halo ---- */
+  .moon{position:fixed;top:4%;right:7%;z-index:0;width:210px;height:210px}
+  .moon svg{width:100%;height:100%;filter:drop-shadow(0 0 38px rgba(180,212,255,.65))}
+  .moon::before{content:"";position:absolute;inset:-32%;border-radius:50%;z-index:-1;
+    background:radial-gradient(circle, rgba(150,190,255,.34), transparent 60%)}
+
+  /* ---- colina donde se para la jirafa ---- */
+  .hill{position:fixed;left:-12%;right:-12%;bottom:-70px;height:230px;z-index:0;
+    background:linear-gradient(180deg,#0c3f8f,#082a63);
+    border-radius:50% 50% 0 0 / 100% 100% 0 0;box-shadow:0 -14px 50px rgba(12,63,143,.5);opacity:.85}
+
+  canvas#fw{position:fixed;inset:0;z-index:1;pointer-events:none}
+
+  .stage{position:relative;z-index:3;max-width:660px;width:100%}
+
+  /* ---- inicio ---- */
+  .pre{font-weight:300;color:#bcd6ff;letter-spacing:.06em;font-size:1.2rem;margin-bottom:36px;text-transform:uppercase}
+  .gift-wrap{position:relative;display:inline-block}
+  .gift-wrap::before{content:"";position:absolute;inset:-30px;border-radius:50%;z-index:-1;
+    background:radial-gradient(circle, rgba(120,192,252,.45), transparent 66%);animation:aura 2.4s ease-in-out infinite}
+  @keyframes aura{0%,100%{transform:scale(.85);opacity:.55}50%{transform:scale(1.18);opacity:1}}
+  .giftbtn{background:none;border:none;cursor:pointer;animation:beat 1.5s ease-in-out infinite;transition:transform .2s}
+  .giftbtn:hover{transform:scale(1.06)} .giftbtn:active{transform:scale(.93)}
+  @keyframes beat{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+  .tap{margin-top:30px;font-family:var(--disp);font-weight:600;font-size:1.35rem;letter-spacing:.03em;color:#bcd6ff}
+  .tap .dot{display:inline-block;animation:blink 1.4s infinite}
+  @keyframes blink{0%,100%{opacity:.3}50%{opacity:1}}
+
+  /* ---- sorpresa (tarjeta de vidrio) ---- */
+  .reveal{display:none}
+  .reveal.show{display:block;animation:pop .8s cubic-bezier(.2,.8,.2,1)}
+  @keyframes pop{from{opacity:0;transform:scale(.92) translateY(24px)}to{opacity:1;transform:none}}
+  .card{background:rgba(255,255,255,.06);border:1px solid rgba(174,224,255,.22);border-radius:30px;
+    padding:52px 40px;backdrop-filter:blur(10px);box-shadow:0 34px 80px rgba(0,0,0,.4), inset 0 1px 0 rgba(255,255,255,.12)}
+  .title{font-family:var(--disp);font-weight:700;font-size:3.9rem;line-height:1.04;letter-spacing:-.5px;
+    color:#ffffff;filter:drop-shadow(0 4px 20px rgba(90,184,255,.35))}
+  .msg{font-weight:300;font-size:1.16rem;color:#d3e4ff;max-width:42ch;margin:18px auto 0;line-height:1.75}
+
+  .cd-label{margin-top:38px;font-weight:400;color:#9fc0ee;letter-spacing:.08em;font-size:.9rem;text-transform:uppercase}
+  .countdown{display:flex;gap:14px;justify-content:center;margin-top:18px;flex-wrap:wrap}
+  .box{background:rgba(255,255,255,.07);border:1px solid rgba(120,192,252,.4);border-radius:18px;
+    padding:18px 12px;min-width:88px;backdrop-filter:blur(6px);box-shadow:0 12px 30px rgba(0,0,0,.28), inset 0 1px 0 rgba(255,255,255,.15)}
+  .box .n{font-family:var(--disp);font-weight:700;font-size:2.4rem;line-height:1;color:#eef5ff}
+  .box .l{font-size:.68rem;text-transform:uppercase;letter-spacing:.16em;color:#8fb0e0;margin-top:8px}
+  .celebrate{font-family:var(--disp);font-weight:700;font-size:2.7rem;color:#ffffff}
+
+  .sign{margin-top:34px;font-family:var(--disp);font-weight:500;font-size:1.35rem;color:#9fc0ee}
+  .again{margin-top:24px;background:linear-gradient(90deg,#5ab8ff,#1f6fd0);border:none;color:#fff;border-radius:999px;
+    padding:14px 30px;font-family:var(--sans);font-weight:600;font-size:.95rem;cursor:pointer;transition:transform .2s,box-shadow .2s;
+    box-shadow:0 12px 28px rgba(31,111,208,.5)}
+  .again:hover{transform:translateY(-3px);box-shadow:0 18px 36px rgba(31,111,208,.6)}
+
+  /* ---- jirafa ---- */
+  .giraffe{position:fixed;bottom:24px;left:5%;z-index:2;width:132px;height:auto;
+    filter:drop-shadow(0 10px 20px rgba(0,0,0,.4));transform-origin:bottom center;animation:gbob 4.5s ease-in-out infinite}
+  @keyframes gbob{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+
+  @media(max-width:560px){
+    .card{padding:38px 24px} .title{font-size:2.7rem} .box{min-width:72px} .box .n{font-size:1.9rem}
+    .giraffe{width:96px;left:4%;bottom:14px;opacity:.95} .pre{font-size:1rem}
+    .moon{width:140px;height:140px;top:4%;right:4%}
+  }
+</style>
+</head>
+<body>
+
+  <div class="sky" id="sky"></div>
+  <div class="hill"></div>
+
+  <!-- luna grande con brillo -->
+  <div class="moon" aria-hidden="true">
+    <svg viewBox="0 0 200 200">
+      <defs>
+        <radialGradient id="mg" cx="38%" cy="32%" r="82%">
+          <stop offset="0" stop-color="#ffffff"/><stop offset="45%" stop-color="#eef4ff"/>
+          <stop offset="80%" stop-color="#c9dbf6"/><stop offset="100%" stop-color="#aec6ea"/>
+        </radialGradient>
+        <radialGradient id="cr" cx="40%" cy="35%" r="72%">
+          <stop offset="0" stop-color="#c6d8f2"/><stop offset="100%" stop-color="#aec6ea"/>
+        </radialGradient>
+      </defs>
+      <circle cx="100" cy="100" r="80" fill="url(#mg)"/>
+      <circle cx="74" cy="72" r="13" fill="url(#cr)" opacity=".8"/>
+      <circle cx="124" cy="108" r="18" fill="url(#cr)" opacity=".7"/>
+      <circle cx="92" cy="142" r="9" fill="url(#cr)" opacity=".7"/>
+      <circle cx="138" cy="70" r="7" fill="url(#cr)" opacity=".6"/>
+      <circle cx="64" cy="120" r="6" fill="url(#cr)" opacity=".6"/>
+      <circle cx="114" cy="152" r="5" fill="url(#cr)" opacity=".5"/>
+    </svg>
+  </div>
+
+  <!-- jirafa azul -->
+  <svg class="giraffe" viewBox="0 0 210 240" aria-hidden="true">
+    <rect x="44" y="188" width="13" height="52" rx="5" fill="#4dabf7"/>
+    <rect x="60" y="190" width="13" height="50" rx="5" fill="#74c0fc"/>
+    <rect x="92" y="188" width="13" height="52" rx="5" fill="#4dabf7"/>
+    <rect x="108" y="190" width="13" height="50" rx="5" fill="#74c0fc"/>
+    <rect x="44" y="232" width="13" height="8" rx="3" fill="#0b4a8f"/>
+    <rect x="60" y="232" width="13" height="8" rx="3" fill="#0b4a8f"/>
+    <rect x="92" y="232" width="13" height="8" rx="3" fill="#0b4a8f"/>
+    <rect x="108" y="232" width="13" height="8" rx="3" fill="#0b4a8f"/>
+    <path d="M52 165 Q 34 185 40 205" stroke="#4dabf7" stroke-width="5" fill="none" stroke-linecap="round"/>
+    <circle cx="40" cy="207" r="6" fill="#0b4a8f"/>
+    <ellipse cx="82" cy="172" rx="50" ry="30" fill="#74c0fc"/>
+    <path d="M96 150 L112 150 L164 58 L146 54 Z" fill="#74c0fc"/>
+    <path d="M146 54 L164 58 L120 140 L108 138 Z" fill="#339af0"/>
+    <ellipse cx="162" cy="50" rx="24" ry="16" fill="#74c0fc"/>
+    <ellipse cx="184" cy="56" rx="12" ry="9" fill="#a5d8ff"/>
+    <ellipse cx="150" cy="36" rx="9" ry="5" fill="#4dabf7" transform="rotate(-25 150 36)"/>
+    <rect x="156" y="22" width="5" height="14" rx="2.5" fill="#339af0"/><circle cx="158.5" cy="20" r="5" fill="#0b4a8f"/>
+    <rect x="168" y="24" width="5" height="13" rx="2.5" fill="#339af0"/><circle cx="170.5" cy="22" r="5" fill="#0b4a8f"/>
+    <circle cx="166" cy="47" r="3.2" fill="#0a2a5a"/>
+    <circle cx="190" cy="56" r="2" fill="#0b4a8f"/>
+    <g fill="#1971c2">
+      <ellipse cx="70" cy="165" rx="9" ry="7"/><ellipse cx="96" cy="178" rx="10" ry="8"/><ellipse cx="72" cy="189" rx="8" ry="6"/>
+      <ellipse cx="108" cy="162" rx="7" ry="6"/><ellipse cx="128" cy="120" rx="6" ry="5"/><ellipse cx="140" cy="92" rx="5" ry="4"/><ellipse cx="152" cy="72" rx="4.5" ry="4"/>
+    </g>
+  </svg>
+
+  <canvas id="fw"></canvas>
+
+  <div class="stage">
+    <!-- INICIO -->
+    <div class="intro" id="intro">
+      <div class="pre">Tengo una sorpresa para ti</div>
+      <div class="gift-wrap">
+        <button class="giftbtn" id="giftBtn" aria-label="Abrir sorpresa">
+          <svg width="168" height="168" viewBox="0 0 140 140">
+            <defs>
+              <linearGradient id="gbox" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5ab8ff"/><stop offset="1" stop-color="#1f6fd0"/></linearGradient>
+              <linearGradient id="glid" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#2e86e0"/><stop offset="1" stop-color="#14539e"/></linearGradient>
+            </defs>
+            <rect x="26" y="60" width="88" height="58" rx="9" fill="url(#gbox)"/>
+            <rect x="16" y="44" width="108" height="22" rx="9" fill="url(#glid)"/>
+            <rect x="62" y="44" width="16" height="74" fill="#aee0ff"/>
+            <path d="M70 44 C 52 24, 34 32, 50 44 C 34 56, 56 58, 70 44 Z" fill="#cdebff"/>
+            <path d="M70 44 C 88 24, 106 32, 90 44 C 106 56, 84 58, 70 44 Z" fill="#cdebff"/>
+            <circle cx="70" cy="44" r="7" fill="#eaf4ff"/>
+          </svg>
+        </button>
+      </div>
+      <div class="tap">toca el regalo <span class="dot">·</span></div>
+    </div>
+
+    <!-- SORPRESA -->
+    <div class="reveal" id="reveal">
+      <div class="card">
+        <!-- EDITA: título -->
+        <div class="title">¡Felices 6 meses, pulga!</div>
+        <!-- EDITA: tu mensaje -->
+        <p class="msg">Seis meses increíbles a tu lado. Gracias por todo lo que hemos vivido — y por lo que falta.</p>
+
+        <div class="cd-label">Faltan para nuestro aniversario</div>
+        <div class="countdown" id="countdown"></div>
+
+        <div class="sign">— Con cariño</div>
+        <button class="again" id="againBtn">Otra vez</button>
+      </div>
+    </div>
+  </div>
+
+<script>
+  /* ===== FECHA DEL ANIVERSARIO (Julio = mes 6, cuenta desde 0) ===== */
+  const TARGET = new Date(2026, 6, 30, 0, 0, 0);   // 30 de julio de 2026
+
+  /* ----- estrellas + destellos (tonos azules) ----- */
+  const sky=document.getElementById('sky');
+  const colors=['#ffffff','#a5d8ff','#74c0fc'];
+  for(let i=0;i<64;i++){
+    const st=document.createElement('div'); st.className='star';
+    const sz=1+Math.random()*2.6; st.style.width=st.style.height=sz+'px';
+    st.style.left=Math.random()*100+'vw'; st.style.top=Math.random()*100+'vh';
+    const c=colors[Math.floor(Math.random()*colors.length)];
+    st.style.background=c; st.style.boxShadow=`0 0 ${sz*3}px ${c}`;
+    st.style.animationDuration=(1.6+Math.random()*3)+'s'; st.style.animationDelay=(Math.random()*4)+'s';
+    sky.appendChild(st);
+  }
+  for(let i=0;i<7;i++){
+    const c=colors[Math.floor(Math.random()*colors.length)];
+    const wrap=document.createElement('div'); wrap.className='spark';
+    const sz=11+Math.random()*13;
+    wrap.style.left=Math.random()*100+'vw'; wrap.style.top=Math.random()*80+'vh';
+    wrap.style.animationDuration=(2+Math.random()*3)+'s'; wrap.style.animationDelay=(Math.random()*4)+'s';
+    wrap.innerHTML=`<svg width="${sz}" height="${sz}" viewBox="0 0 24 24"><path d="M12 0 L14 10 L24 12 L14 14 L12 24 L10 14 L0 12 L10 10 Z" fill="${c}"/></svg>`;
+    sky.appendChild(wrap);
+  }
+
+  /* ----- fuegos artificiales + confetti (azules) ----- */
+  const canvas=document.getElementById('fw'), ctx=canvas.getContext('2d');
+  let particles=[]; let confettiPieces=[];
+  function resize(){ canvas.width=innerWidth; canvas.height=innerHeight; }
+  resize(); addEventListener('resize',resize);
+
+  const FW=['#4cc9f0','#74c0fc','#ffffff','#ffd166','#ff5db1','#8affc1'];
+  function burst(x,y){
+    const base=FW[Math.floor(Math.random()*FW.length)];
+    const n=58+Math.floor(Math.random()*26);
+    for(let i=0;i<n;i++){ const a=(Math.PI*2/n)*i; const sp=1.8+Math.random()*5.2;
+      particles.push({x,y,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp,life:1,color:base}); }
+  }
+  const CONF=['#5ab8ff','#a5d8ff','#ffffff','#74c0fc','#1f6fd0'];
+  function dropConfetti(){
+    for(let i=0;i<85;i++){ confettiPieces.push({
+      x:Math.random()*canvas.width, y:Math.random()*-canvas.height,
+      w:4+Math.random()*5, h:6+Math.random()*6, color:CONF[Math.floor(Math.random()*CONF.length)],
+      rot:Math.random()*Math.PI, vr:(Math.random()-0.5)*0.3, vy:2+Math.random()*4, vx:(Math.random()-0.5)*2 }); }
+  }
+  function show(){
+    dropConfetti();
+    let c=0; const iv=setInterval(()=>{
+      burst(canvas.width*(0.16+Math.random()*0.68), canvas.height*(0.12+Math.random()*0.42));
+      if(++c>=13) clearInterval(iv);
+    },260);
+  }
+  (function loop(){
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    for(const p of particles){
+      p.vy+=0.03; p.x+=p.vx; p.y+=p.vy; p.life-=0.011;
+      ctx.globalAlpha=Math.max(p.life,0); ctx.shadowBlur=16; ctx.shadowColor=p.color; ctx.fillStyle=p.color;
+      ctx.beginPath(); ctx.arc(p.x,p.y,3.2,0,7); ctx.fill();
+    }
+    ctx.globalAlpha=1; ctx.shadowBlur=0;
+    for(let i=confettiPieces.length-1;i>=0;i--){ const c=confettiPieces[i];
+      c.y+=c.vy; c.x+=c.vx; c.rot+=c.vr;
+      ctx.save(); ctx.translate(c.x,c.y); ctx.rotate(c.rot); ctx.fillStyle=c.color; ctx.fillRect(-c.w/2,-c.h/2,c.w,c.h); ctx.restore();
+      if(c.y>canvas.height+24) confettiPieces.splice(i,1);
+    }
+    particles=particles.filter(p=>p.life>0);
+    requestAnimationFrame(loop);
+  })();
+
+  /* ----- cuenta regresiva ----- */
+  const cd=document.getElementById('countdown');
+  function tick(){
+    const diff=TARGET-new Date();
+    if(diff<=0){ cd.innerHTML='<div class="celebrate">¡Hoy es nuestro día!</div>'; return; }
+    const d=Math.floor(diff/86400000), h=Math.floor(diff%86400000/3600000),
+          m=Math.floor(diff%3600000/60000), s=Math.floor(diff%60000/1000);
+    const box=(n,l)=>`<div class="box"><div class="n">${String(n).padStart(2,'0')}</div><div class="l">${l}</div></div>`;
+    cd.innerHTML=box(d,'días')+box(h,'horas')+box(m,'min')+box(s,'seg');
+  }
+
+  /* ----- interacción ----- */
+  document.getElementById('giftBtn').addEventListener('click',()=>{
+    document.getElementById('intro').style.display='none';
+    document.getElementById('reveal').classList.add('show');
+    show(); tick(); setInterval(tick,1000);
+  });
+  document.getElementById('againBtn').addEventListener('click',show);
+</script>
+</body>
+</html>
