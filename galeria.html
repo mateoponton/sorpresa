@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Para pulga</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Poppins:wght@300;400;500&display=swap" rel="stylesheet" />
+<style>
+  :root{ --sans:'Poppins',sans-serif; --disp:'Fredoka',sans-serif; }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:var(--sans);color:#eaf3ff;min-height:100vh;
+    background:
+      radial-gradient(720px 440px at 80% 4%, rgba(170,205,255,.28), transparent 62%),
+      linear-gradient(180deg,#020e2b 0%, #06235e 55%, #0a327f 100%);
+    background-attachment:fixed}
+  .sky{position:fixed;inset:0;z-index:0;overflow:hidden;pointer-events:none}
+  .star{position:absolute;border-radius:50%;animation:tw ease-in-out infinite}
+  @keyframes tw{0%,100%{opacity:.25;transform:scale(.6)}50%{opacity:1;transform:scale(1)}}
+
+  .wrap{position:relative;z-index:2;max-width:880px;margin:0 auto;padding:70px 22px 80px}
+
+  header{text-align:center;margin-bottom:44px}
+  .eyebrow{font-family:var(--sans);font-weight:300;letter-spacing:.24em;text-transform:uppercase;color:#9fc0ee;font-size:.82rem}
+  header h1{font-family:var(--disp);font-weight:700;font-size:3.4rem;line-height:1.05;margin-top:10px;color:#fff;filter:drop-shadow(0 4px 20px rgba(90,184,255,.35))}
+
+  /* carta */
+  .letter{background:rgba(255,255,255,.06);border:1px solid rgba(174,224,255,.22);border-radius:26px;
+    padding:40px 36px;backdrop-filter:blur(10px);box-shadow:0 30px 70px rgba(0,0,0,.4), inset 0 1px 0 rgba(255,255,255,.12);
+    max-width:640px;margin:0 auto 60px}
+  .letter h2{font-family:var(--disp);font-weight:600;font-size:1.7rem;color:#fff;margin-bottom:18px}
+  .letter p{font-weight:300;font-size:1.08rem;line-height:1.85;color:#dbe8ff;white-space:pre-line}
+  .letter .firma{font-family:var(--disp);font-weight:500;font-size:1.3rem;color:#bcd6ff;margin-top:24px;text-align:right}
+
+  .sec-title{text-align:center;font-family:var(--disp);font-weight:600;font-size:1.9rem;color:#fff;margin-bottom:28px}
+
+  /* galería (masonry) */
+  .grid{column-count:3;column-gap:14px}
+  .grid img{width:100%;margin-bottom:14px;border-radius:16px;break-inside:avoid;cursor:pointer;display:block;
+    box-shadow:0 12px 30px rgba(0,0,0,.35);opacity:0;transform:translateY(20px);transition:opacity .7s ease,transform .7s ease, box-shadow .25s}
+  .grid img.in{opacity:1;transform:none}
+  .grid img:hover{box-shadow:0 18px 40px rgba(90,150,255,.4)}
+
+  /* lightbox */
+  .lb{position:fixed;inset:0;z-index:50;background:rgba(4,10,30,.92);backdrop-filter:blur(6px);display:none;align-items:center;justify-content:center}
+  .lb.show{display:flex}
+  .lb img{max-width:92vw;max-height:86vh;border-radius:12px;box-shadow:0 30px 80px rgba(0,0,0,.6)}
+  .lb .x{position:absolute;top:20px;right:24px;font-size:2rem;color:#fff;cursor:pointer;background:none;border:none;line-height:1}
+  .lb .nav{position:absolute;top:50%;transform:translateY(-50%);font-size:2.4rem;color:#fff;cursor:pointer;background:none;border:none;padding:14px;opacity:.8}
+  .lb .prev{left:6px} .lb .next{right:6px}
+  .lb .nav:hover{opacity:1}
+
+  footer{text-align:center;margin-top:60px;font-family:var(--disp);color:#9fc0ee;font-size:1.2rem}
+
+  @media(max-width:760px){ .grid{column-count:2} header h1{font-size:2.5rem} .letter{padding:30px 22px} }
+  @media(max-width:440px){ .grid{column-count:1} }
+</style>
+</head>
+<body>
+  <div class="sky" id="sky"></div>
+
+  <div class="wrap">
+    <header>
+      <div class="eyebrow">30 de Julio · 6 meses</div>
+      <h1>Feliz aniversario, pulga</h1>
+    </header>
+
+    <!-- ✏️ EDITA: aquí va tu carta (Mateo me pasa el texto) -->
+    <div class="letter">
+      <h2>Mi pulga,</h2>
+      <p>[Aquí va tu carta bonita. Escríbela como quieras — puede ser todo lo largo que gustes. Este texto se cambia por el que me pases.]
+
+Gracias por estos seis meses.</p>
+      <div class="firma">— Con todo mi cariño, Mateo</div>
+    </div>
+
+    <div class="sec-title">Nosotros</div>
+    <div class="grid" id="grid"></div>
+
+    <footer>Te quiero, pulga</footer>
+  </div>
+
+  <!-- lightbox -->
+  <div class="lb" id="lb">
+    <button class="x" onclick="closeLb()">&times;</button>
+    <button class="nav prev" onclick="move(-1)">&#8249;</button>
+    <img id="lbImg" src="" alt="" />
+    <button class="nav next" onclick="move(1)">&#8250;</button>
+  </div>
+
+<script>
+  /* estrellas */
+  const sky=document.getElementById('sky'); const cols=['#ffffff','#a5d8ff','#74c0fc'];
+  for(let i=0;i<50;i++){ const s=document.createElement('div'); s.className='star';
+    const z=1+Math.random()*2.4; s.style.width=s.style.height=z+'px';
+    s.style.left=Math.random()*100+'vw'; s.style.top=Math.random()*100+'vh';
+    const c=cols[Math.floor(Math.random()*cols.length)]; s.style.background=c; s.style.boxShadow=`0 0 ${z*3}px ${c}`;
+    s.style.animationDuration=(1.6+Math.random()*3)+'s'; s.style.animationDelay=(Math.random()*4)+'s'; sky.appendChild(s); }
+
+  /* galería */
+  const N=15; const srcs=[]; const grid=document.getElementById('grid');
+  for(let i=1;i<=N;i++){ const src=`fotos/foto-${String(i).padStart(2,'0')}.jpg`; srcs.push(src);
+    const img=document.createElement('img'); img.src=src; img.loading='lazy'; img.alt='Nosotros';
+    img.addEventListener('click',()=>openLb(i-1)); grid.appendChild(img); }
+
+  /* aparición al hacer scroll */
+  const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}}),{threshold:.1});
+  document.querySelectorAll('.grid img').forEach((el,i)=>{ el.style.transitionDelay=(i%3)*0.08+'s'; io.observe(el); });
+
+  /* lightbox */
+  let cur=0; const lb=document.getElementById('lb'), lbImg=document.getElementById('lbImg');
+  function openLb(i){ cur=i; lbImg.src=srcs[cur]; lb.classList.add('show'); }
+  function closeLb(){ lb.classList.remove('show'); }
+  function move(d){ cur=(cur+d+srcs.length)%srcs.length; lbImg.src=srcs[cur]; }
+  lb.addEventListener('click',e=>{ if(e.target===lb) closeLb(); });
+  document.addEventListener('keydown',e=>{ if(!lb.classList.contains('show'))return;
+    if(e.key==='Escape')closeLb(); if(e.key==='ArrowRight')move(1); if(e.key==='ArrowLeft')move(-1); });
+</script>
+</body>
+</html>

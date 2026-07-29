@@ -79,6 +79,14 @@
     padding:14px 30px;font-family:var(--sans);font-weight:600;font-size:.95rem;cursor:pointer;transition:transform .2s,box-shadow .2s;
     box-shadow:0 12px 28px rgba(31,111,208,.5)}
   .again:hover{transform:translateY(-3px);box-shadow:0 18px 36px rgba(31,111,208,.6)}
+  .secret{margin-top:30px;background:linear-gradient(90deg,#aee0ff,#5ab8ff);border:none;color:#082a5e;border-radius:999px;
+    padding:16px 34px;font-family:var(--disp);font-weight:600;font-size:1.08rem;cursor:pointer;transition:transform .2s;
+    animation:secpulse 2.2s ease-in-out infinite}
+  .secret:hover{transform:translateY(-3px)}
+  @keyframes secpulse{0%,100%{box-shadow:0 12px 26px rgba(90,184,255,.4)}50%{box-shadow:0 16px 42px rgba(90,184,255,.8)}}
+  .waitmsg{max-height:0;overflow:hidden;transition:max-height .4s ease,margin .4s ease}
+  .waitmsg.show{max-height:90px;margin-top:16px}
+  .waitmsg .inner{font-family:var(--disp);font-size:1.2rem;color:#dbe8ff}
 
   /* ---- jirafa ---- */
   .giraffe{position:fixed;bottom:24px;left:5%;z-index:2;width:132px;height:auto;
@@ -183,6 +191,9 @@
         <div class="cd-label">Faltan para nuestro aniversario</div>
         <div class="countdown" id="countdown"></div>
 
+        <button class="secret" id="secretBtn">Tengo otra sorpresa</button>
+        <div class="waitmsg" id="waitMsg"></div>
+
         <div class="sign">— Con cariño</div>
         <button class="again" id="againBtn">Otra vez</button>
       </div>
@@ -277,6 +288,20 @@
     show(); tick(); setInterval(tick,1000);
   });
   document.getElementById('againBtn').addEventListener('click',show);
+
+  /* ===== segundo botón: se desbloquea a las 12 ===== */
+  /* 30 de julio 2026 a las 12:00 (mediodía). Para MEDIANOCHE usa (2026,6,30,0,0,0) */
+  const UNLOCK = new Date(2026,6,30,12,0,0);
+  document.getElementById('secretBtn').addEventListener('click',()=>{
+    if(new Date() < UNLOCK){
+      const w=document.getElementById('waitMsg');
+      w.innerHTML='<div class="inner">Te tienes que esperar a las 12, huerca</div>';
+      w.classList.add('show');
+      clearTimeout(window.__wt); window.__wt=setTimeout(()=>w.classList.remove('show'),4500);
+    } else {
+      location.href='galeria.html';
+    }
+  });
 </script>
 </body>
 </html>
