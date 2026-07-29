@@ -290,8 +290,8 @@
   document.getElementById('againBtn').addEventListener('click',show);
 
   /* ===== segundo botón: se desbloquea a las 12 ===== */
-  /* 30 de julio 2026 a las 12:00 (mediodía). Para MEDIANOCHE usa (2026,6,30,0,0,0) */
-  const UNLOCK = new Date(2026,6,30,12,0,0);
+  /* 30 de julio 2026 a las 00:00 (medianoche — cuando apenas empieza el 30) */
+  const UNLOCK = new Date(2026,6,30,0,0,0);
   document.getElementById('secretBtn').addEventListener('click',()=>{
     if(new Date() < UNLOCK){
       const w=document.getElementById('waitMsg');
